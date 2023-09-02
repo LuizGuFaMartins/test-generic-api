@@ -1,7 +1,7 @@
 const fs = require("fs");
 const express = require("express");
 const router = express.Router();
-const endpoints = require("./endpoints");
+const endpoints = require("./generic-routes");
 const sequelizeMiddleware =
   require("./middlewares/sequelize-middleware").middleware;
 
@@ -13,18 +13,20 @@ module.exports = function (modelsPath, options) {
   if (models.length > 0) {
     models.forEach(function (file) {
       if (file.includes(".js")) {
-        const model = require(`${modelsPath}/${file}`);
         const modelName = file.replace(".js", "");
-        const route = "/" + modelName;
-        router.use(route, middlewares, function (req, res, next) {
-          req.routeModel = {
-            modelName: modelName,
-            models: models,
-            model: model,
-            path: modelsPath,
-          };
-          return endpoints(req, res, next);
-        });
+        if (!options.ignore.find((item) => item === modelName)) {
+          const model = require(`${modelsPath}/${file}`);
+          const route = "/" + modelName;
+          router.use(route, middlewares, function (req, res, next) {
+            req.routeModel = {
+              modelName: modelName,
+              models: models,
+              model: model,
+              path: modelsPath,
+            };
+            return endpoints(req, res, next);
+          });
+        }
       }
     });
   }

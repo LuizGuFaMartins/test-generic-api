@@ -15,23 +15,15 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(
   expressCoreApi(__dirname + "/models", {
     middlewares: [],
+    ignoreModels: [],
+    generateRoutes: true,
     database: {
       type: "sql",
-      connection: {
-        credentials: {
-          database: process.env.DATABASE_NAME,
-          user: process.env.DATABASE_USER,
-          password: process.env.DATABASE_PASSWORD,
-          host: process.env.DATABASE_HOST,
-          port: process.env.DATABASE_PORT,
-          dialect: process.env.DATABASE_DIALECT,
-        },
-      },
     },
   })
 );
 
-TODO: app.use(cors());
+app.use(cors());
 
 // app.use("/api", indexRouter);
 
