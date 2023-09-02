@@ -21,6 +21,7 @@ module.exports = function (modelsPath, options) {
             modelName: modelName,
             models: models,
             model: model,
+            path: modelsPath,
           };
           return endpoints(req, res, next);
         });
