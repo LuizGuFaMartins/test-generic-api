@@ -1,7 +1,7 @@
 const fs = require("fs");
 const express = require("express");
 const router = express.Router();
-const routes = require("./generic-routes");
+const endpoints = require("./endpoints");
 const sequelizeMiddleware =
   require("./middlewares/sequelize-middleware").middleware;
 
@@ -22,7 +22,7 @@ module.exports = function (modelsPath, options) {
             models: models,
             model: model,
           };
-          return routes(req, res, next);
+          return endpoints(req, res, next);
         });
       }
     });
@@ -30,13 +30,6 @@ module.exports = function (modelsPath, options) {
 
   return router;
 };
-
-// function addMiddlewares(middlewares) {
-//   for (var i = 0; i < middlewares.length; i++) {
-//     router.use(middlewares[i]);
-//   }
-//   return router;
-// }
 
 function addMiddlewares(options) {
   router.use(sequelizeMiddleware);

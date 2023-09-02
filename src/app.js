@@ -3,7 +3,7 @@ const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
 
-const genericRoutes = require("./genericRoutes");
+const expressCoreApi = require("./express-core-api");
 const indexRouter = require("./routes/routes");
 
 const app = express();
@@ -13,18 +13,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
-  genericRoutes(__dirname + "/models", {
+  expressCoreApi(__dirname + "/models", {
     middlewares: [],
     database: {
       type: "sql",
       connection: {
         credentials: {
-          database: "",
-          user: "",
-          password: "",
-          host: "",
-          port: "",
-          dialect: "",
+          database: process.env.DATABASE_NAME,
+          user: process.env.DATABASE_USER,
+          password: process.env.DATABASE_PASSWORD,
+          host: process.env.DATABASE_HOST,
+          port: process.env.DATABASE_PORT,
+          dialect: process.env.DATABASE_DIALECT,
         },
       },
     },

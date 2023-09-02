@@ -1,7 +1,6 @@
 const reservedVars = ['populate', 'fields'];
 
 const middleware = (req, res, next) => {
-    console.log(JSON.parse(req.query.where))
     try {
         req.queryOptions = {
             where: req.query.where ? JSON.parse(req.query.where) : removeReservedVars(req.query),
