@@ -1,3 +1,5 @@
+const { Op } = require("sequelize");
+
 const reservedVars = ["include", "fields"];
 
 const middleware = (req, res, next) => {
