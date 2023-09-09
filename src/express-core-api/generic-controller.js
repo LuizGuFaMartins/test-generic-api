@@ -1,5 +1,4 @@
 exports.findAll = function (req, res, next) {
-  console.log("service: " ,req.queryOptions)
   req.routeModel.model
     .findAll(req.queryOptions)
     .then(function (data) {

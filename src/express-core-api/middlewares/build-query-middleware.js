@@ -1,25 +1,23 @@
+const { Op } = require("sequelize");
+
 exports.buildQuery = (req, res, next) => {
-  let includes = [];
-
-  req.query = {
-    where: {
-      student_name: {
-        [Op.like]: `%${"Luiz"}%`,
-      },
-    },
-  };
-
-  if (req.queryOptions.include) {
-    req.queryOptions.include.forEach((relation) => {
-      req.routeModel.models.forEach((model) => {
-        if (model.includes(relation)) {
-          includes.push({
-            model: require(`${req.routeModel.path}/${model}`),
-          });
-        }
-      });
-    });
+  let queries = {};
+  if (req.queryOptions.where) {
+    let query = Object.create(req.queryOptions.where);
+    for (key in query) {
+      if (typeof query[key] === "string") {
+        queries[key] = {
+          [Op.like]: `%${query[key]}%`,
+        };
+      } else {
+        queries[key] = query[key];
+      }
+    }
   }
-  req.queryOptions.include = includes;
+
+  req.queryOptions.where = queries;
+
+  console.log("final: ", req.queryOptions.where);
+
   next();
 };

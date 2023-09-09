@@ -4,8 +4,9 @@ const genericController = require("./generic-controller");
 const {
   associateRelation,
 } = require("./middlewares/associate-relation-middleware");
+const { buildQuery } = require("./middlewares/build-query-middleware");
 
-router.get("/", associateRelation, genericController.findAll);
+router.get("/", associateRelation, buildQuery, genericController.findAll);
 
 router.post("/", genericController.create);
 
