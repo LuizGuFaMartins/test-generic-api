@@ -24,7 +24,7 @@ exports.create = function (req, res, next) {
 
 exports.findById = function (req, res, next) {
   req.routeModel.model
-    .findById(req.params.id)
+    .findByPk(req.params.id)
     .then(function (record) {
       if (record) return res.json(record);
       return next();
@@ -53,7 +53,7 @@ exports.findWithRelation = function (req, res, next) {
 
 exports.update = function (req, res, next) {
   req.routeModel.model
-    .findById(req.params.id)
+    .findByPk(req.params.id)
     .then(function (record) {
       Object.assign(record, req.body);
       record.save();
@@ -67,10 +67,10 @@ exports.update = function (req, res, next) {
 
 exports.delete = function (req, res, next) {
   req.routeModel.model
-    .findById(req.params.id)
+    .findByPk(req.params.id)
     .then(function (record) {
       record.destroy();
-      res.json({ message: req.params.model + " destroyed" });
+      res.json({ message: req.params.modelName + " destroyed" });
     })
     .catch(function (err) {
       res.json({ error: err.toString() });

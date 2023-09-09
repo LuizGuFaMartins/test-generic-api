@@ -17,7 +17,5 @@ exports.buildQuery = (req, res, next) => {
 
   req.queryOptions.where = queries;
 
-  console.log("final: ", req.queryOptions.where);
-
   next();
 };

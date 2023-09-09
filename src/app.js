@@ -4,7 +4,6 @@ const cors = require("cors");
 require("dotenv").config();
 
 const expressCoreApi = require("./express-core-api");
-// const indexRouter = require("./routes/routes");
 
 const app = express();
 
@@ -24,7 +23,5 @@ app.use(
 );
 
 app.use(cors());
-
-// app.use("/api", indexRouter);
 
 module.exports = app;
