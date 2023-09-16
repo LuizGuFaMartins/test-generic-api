@@ -25,10 +25,6 @@ const Login = database.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
-    login_count: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-    },
   },
   {
     timestamps: false,

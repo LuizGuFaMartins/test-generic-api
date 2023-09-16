@@ -16,9 +16,8 @@ app.use(
     middlewares: [],
     ignoreModels: [],
     generateRoutes: true,
-    database: {
-      type: "sql",
-    },
+    provideAuthentication: true,
+    useDefaultModels: true
   })
 );
 
