@@ -13,6 +13,6 @@ exports.verifyToken = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: "Invalid token provided" });
+    res.status(401).json({ error: "Unauthorized user" });
   }
 };

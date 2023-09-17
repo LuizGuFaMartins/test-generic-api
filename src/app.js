@@ -13,11 +13,18 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
   expressCoreApi(__dirname + "/models", {
-    middlewares: [],
-    ignoreModels: [],
-    generateRoutes: true,
-    provideAuthentication: true,
-    useDefaultModels: true
+    routes: {
+      generateRoutes: true,
+      middlewares: [],
+    },
+    authentication: {
+      provide: true,
+      ignoreModels: [],
+    },
+    models: {
+      useDefaultModels: true,
+      ignoreModels: [],
+    },
   })
 );
 

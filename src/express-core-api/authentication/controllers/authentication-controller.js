@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const Login = require("./models/logins");
+const Login = require("../../default-models/logins");
 
 exports.auth = async (req, res) => {
   const { login_email, login_password } = req.body;
@@ -56,4 +56,33 @@ exports.auth = async (req, res) => {
     });
 
   return response;
+};
+
+exports.createAuth = async (req, res) => {
+  let existentLogin = await Login.findOne({
+    where: {
+      login_email: req.body.login_email,
+    },
+  });
+
+  if (!existentLogin) {
+    let login = {
+      login_email: req.body.login_email,
+      login_password: req.body.login_password,
+      login_name: req.body.login_name,
+      login_photo_url: req.body.login_photo_url,
+    };
+
+    let saved_login = await Login.create(login);
+
+    return res.status(201).json({
+      login_id: saved_login.login_id,
+      login_email: saved_login.login_email,
+      login_name: saved_login.login_name,
+    });
+  } else {
+    return res
+      .status(400)
+      .json({ error: "There is already a user with this email." });
+  }
 };

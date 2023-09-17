@@ -1,54 +1,48 @@
 const fs = require("fs");
 const express = require("express");
 const router = express.Router();
-const endpoints = require("./generic-router");
-const { auth } = require("./authentication.controller");
+const endpoints = require("./generic/routes/generic-router");
+const {
+  auth,
+} = require("./authentication/controllers/authentication-controller");
+const authRouter = require("./authentication/routes/authentication-router");
+const { verifyToken } = require("./middlewares/authentication-middleware");
 const sequelizeMiddleware =
   require("./middlewares/sequelize-middleware").middleware;
 
 module.exports = function (modelsPath = "", options) {
-  const generateRoutes =
-    options.generateRoutes === undefined ? true : options.generateRoutes;
+  options = verifyOptions(options);
+  verifyPath(modelsPath, options.routes.generateRoutes);
 
-  verifyPath(modelsPath, generateRoutes);
-
-  const provideAuthentication =
-    options.provideAuthentication === undefined
-      ? true
-      : options.provideAuthentication;
-  provideAuthentication;
-
-  const useDefaultModels =
-    options.useDefaultModels === undefined ? true : options.useDefaultModels;
+  if (options.authentication.provide && options.models.useDefaultModels) {
+    options.routes.middlewares = [...options.routes.middlewares, verifyToken];
+    router.use(authRouter);
+  }
 
   let models = getModels(modelsPath);
-  const middlewares = addMiddlewares(options);
+  const middlewares = addMiddlewares(options.routes.middlewares);
 
-  if (generateRoutes) {
+  if (options.routes.generateRoutes) {
     if (models.length > 0) {
-      models = ignoreModels(models, options.ignoreModels);
+      models = ignoreModels(models, options.models.ignoreModels);
       createModelsRoutes(models, middlewares, modelsPath);
     }
 
-    if (useDefaultModels) {
-      const defaultModelspath = __dirname + "/models";
+    if (options.models.useDefaultModels) {
+      const defaultModelspath = __dirname + "/default-models";
       let defaultModels = getModels(defaultModelspath);
-      defaultModels = ignoreModels(defaultModels, options.ignoreModels);
+      defaultModels = ignoreModels(defaultModels, options.models.ignoreModels);
       createModelsRoutes(defaultModels, middlewares, defaultModelspath);
     }
-  }
-
-  if (provideAuthentication) {
-    router.post("/auth", auth);
   }
 
   return router;
 };
 
-function addMiddlewares(options) {
+function addMiddlewares(middlewares) {
   router.use(sequelizeMiddleware);
-  if (options?.middlewares?.length > 0) {
-    options.middlewares.forEach((middleware) => {
+  if (middlewares?.length > 0) {
+    middlewares.forEach((middleware) => {
       router.use(middleware);
     });
   }
@@ -99,4 +93,37 @@ function ignoreModels(models, ignore) {
       return model;
     }
   });
+}
+
+function verifyOptions(options) {
+  const defaultOptions = {
+    routes: {
+      generateRoutes: true,
+      middlewares: [],
+    },
+    authentication: {
+      provide: true,
+      ignoreModels: [],
+    },
+    models: {
+      useDefaultModels: true,
+      ignoreModels: [],
+    },
+  };
+
+  return mergeOptions(defaultOptions, options);
+}
+
+function mergeOptions(target, source) {
+  for (const key in source) {
+    if (source.hasOwnProperty(key)) {
+      if (typeof target[key] === "object" && typeof source[key] === "object") {
+        target[key] = mergeOptions(target[key], source[key]);
+      } else if (target[key] === undefined) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
 }
