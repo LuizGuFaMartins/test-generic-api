@@ -13,7 +13,7 @@ const sequelizeMiddleware =
 module.exports = function (modelsPath = "", options) {
   options = verifyOptions(options);
   verifyPath(modelsPath, options.routes.generateRoutes);
-
+  console.log("\n\n\n OPTIONS: ", options, "\n\n\n");
   if (options.authentication.provide && options.models.useDefaultModels) {
     options.routes.middlewares = [...options.routes.middlewares, verifyToken];
     router.use(authRouter);
@@ -38,62 +38,6 @@ module.exports = function (modelsPath = "", options) {
 
   return router;
 };
-
-function addMiddlewares(middlewares) {
-  router.use(sequelizeMiddleware);
-  if (middlewares?.length > 0) {
-    middlewares.forEach((middleware) => {
-      router.use(middleware);
-    });
-  }
-  return router;
-}
-
-function verifyPath(modelsPath, generateRoutes) {
-  if (generateRoutes) {
-    if (!modelsPath) {
-      throw Error(
-        "Failed to create routes. You must provide the path to database entity models"
-      );
-    }
-    if (typeof modelsPath == "undefined") {
-      throw Error(
-        "Failed to create routes. You must provide the path to database entity models"
-      );
-    }
-  }
-}
-
-function getModels(modelsPath) {
-  return fs.readdirSync(modelsPath) || [];
-}
-
-function createModelsRoutes(models, middlewares, modelsPath) {
-  models.forEach(function (file) {
-    if (file.includes(".js")) {
-      const modelName = file.replace(".js", "");
-      const model = require(`${modelsPath}/${file}`);
-      const route = "/" + modelName;
-      router.use(route, middlewares, function (req, res, next) {
-        req.routeModel = {
-          modelName: modelName,
-          models: models,
-          model: model,
-          path: modelsPath,
-        };
-        return endpoints(req, res, next);
-      });
-    }
-  });
-}
-
-function ignoreModels(models, ignore) {
-  return models.filter((model) => {
-    if (models.length ? !ignore.find((item) => item === modelName) : true) {
-      return model;
-    }
-  });
-}
 
 function verifyOptions(options) {
   const defaultOptions = {
@@ -124,6 +68,61 @@ function mergeOptions(target, source) {
       }
     }
   }
-
   return target;
+}
+
+function verifyPath(modelsPath, generateRoutes) {
+  if (generateRoutes) {
+    if (!modelsPath) {
+      throw Error(
+        "Failed to create routes. You must provide the path to database entity models"
+      );
+    }
+    if (typeof modelsPath == "undefined") {
+      throw Error(
+        "Failed to create routes. You must provide the path to database entity models"
+      );
+    }
+  }
+}
+
+function getModels(modelsPath) {
+  return fs.readdirSync(modelsPath) || [];
+}
+
+function addMiddlewares(middlewares) {
+  router.use(sequelizeMiddleware);
+  if (middlewares?.length > 0) {
+    middlewares.forEach((middleware) => {
+      router.use(middleware);
+    });
+  }
+  return router;
+}
+
+function ignoreModels(models, ignore) {
+  return models.filter((model) => {
+    if (models.length ? !ignore.find((item) => item === modelName) : true) {
+      return model;
+    }
+  });
+}
+
+function createModelsRoutes(models, middlewares, modelsPath) {
+  models.forEach(function (file) {
+    if (file.includes(".js")) {
+      const modelName = file.replace(".js", "");
+      const model = require(`${modelsPath}/${file}`);
+      const route = "/" + modelName;
+      router.use(route, middlewares, function (req, res, next) {
+        req.routeModel = {
+          modelName: modelName,
+          models: models,
+          model: model,
+          path: modelsPath,
+        };
+        return endpoints(req, res, next);
+      });
+    }
+  });
 }
