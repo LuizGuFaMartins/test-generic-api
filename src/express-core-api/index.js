@@ -19,7 +19,9 @@ module.exports = function (options) {
     router.use(authRouter);
   }
 
-  let models = getModels(options.routes.modelsPath);
+  let models = options.routes.generateRoutes
+    ? getModels(options.routes.modelsPath)
+    : [];
   const middlewares = addMiddlewares(options.routes.middlewares);
 
   if (options.routes.generateRoutes) {
@@ -27,13 +29,13 @@ module.exports = function (options) {
       models = ignoreModels(models, options.models.ignoreModels);
       createModelsRoutes(models, middlewares, options.routes.modelsPath);
     }
+  }
 
-    if (options.models.useDefaultModels) {
-      const defaultModelspath = __dirname + "/default-models";
-      let defaultModels = getModels(defaultModelspath);
-      defaultModels = ignoreModels(defaultModels, options.models.ignoreModels);
-      createModelsRoutes(defaultModels, middlewares, defaultModelspath);
-    }
+  if (options.models.useDefaultModels) {
+    const defaultModelspath = __dirname + "/default-models";
+    let defaultModels = getModels(defaultModelspath);
+    defaultModels = ignoreModels(defaultModels, options.models.ignoreModels);
+    createModelsRoutes(defaultModels, middlewares, defaultModelspath);
   }
 
   return router;
@@ -64,7 +66,7 @@ function mergeOptions(target, source) {
     if (source.hasOwnProperty(key)) {
       if (typeof target[key] === "object" && typeof source[key] === "object") {
         target[key] = mergeOptions(target[key], source[key]);
-      } else if (target[key] === undefined) {
+      } else if (source[key] !== undefined && source[key] !== null) {
         target[key] = source[key];
       }
     }

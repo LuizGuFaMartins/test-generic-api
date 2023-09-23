@@ -26,9 +26,6 @@ const Student = database.define(
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-  },
-  {
-    timestamps: false,
   }
 );
 

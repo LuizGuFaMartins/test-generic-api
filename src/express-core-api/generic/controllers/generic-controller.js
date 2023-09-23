@@ -70,7 +70,7 @@ exports.delete = function (req, res, next) {
     .findByPk(req.params.id)
     .then(function (record) {
       record.destroy();
-      res.json({ message: req.params.modelName + " destroyed" });
+      res.json({ message: "Successfully deleted." });
     })
     .catch(function (err) {
       res.json({ error: err.toString() });

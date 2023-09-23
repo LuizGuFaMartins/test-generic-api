@@ -22,9 +22,6 @@ const Course = database.define(
       allowNull: false,
     },
   },
-  {
-    timestamps: false,
-  }
 );
 
 Course.sync();

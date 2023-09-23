@@ -15,11 +15,11 @@ app.use(
   expressCoreApi({
     routes: {
       modelsPath: __dirname + "/models",
-      generateRoutes: true,
+      generateRoutes: false,
       middlewares: [],
     },
     authentication: {
-      provide: true,
+      provide: false,
       ignoreModels: [],
     },
     models: {
