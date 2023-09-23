@@ -12,8 +12,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
-  expressCoreApi(__dirname + "/models", {
+  expressCoreApi({
     routes: {
+      modelsPath: __dirname + "/models",
       generateRoutes: true,
       middlewares: [],
     },

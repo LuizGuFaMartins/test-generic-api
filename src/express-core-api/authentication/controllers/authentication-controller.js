@@ -21,8 +21,7 @@ exports.auth = async (req, res) => {
         if (is_match) {
           const jwt_key = process.env.EDUSYSLINK_JWT_KEY;
           if (!jwt_key) {
-            console.error("\n ERROR: ", "You must provide a JWT secret key.", "\n");
-            response = res.status(500).json({ error: "You must provide a JWT secret key." });
+            throw Error("You must provide a JWT secret key.");
           } else {
             const access_token = jwt.sign({ user: login_email }, jwt_key, {
               expiresIn: 10000,

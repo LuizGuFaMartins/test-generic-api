@@ -10,22 +10,22 @@ const { verifyToken } = require("./middlewares/authentication-middleware");
 const sequelizeMiddleware =
   require("./middlewares/sequelize-middleware").middleware;
 
-module.exports = function (modelsPath = "", options) {
+module.exports = function (options) {
   options = verifyOptions(options);
-  verifyPath(modelsPath, options.routes.generateRoutes);
+  verifyPath(options.routes.modelsPath, options.routes.generateRoutes);
   console.log("\n\n\n OPTIONS: ", options, "\n\n\n");
   if (options.authentication.provide && options.models.useDefaultModels) {
     options.routes.middlewares = [...options.routes.middlewares, verifyToken];
     router.use(authRouter);
   }
 
-  let models = getModels(modelsPath);
+  let models = getModels(options.routes.modelsPath);
   const middlewares = addMiddlewares(options.routes.middlewares);
 
   if (options.routes.generateRoutes) {
     if (models.length > 0) {
       models = ignoreModels(models, options.models.ignoreModels);
-      createModelsRoutes(models, middlewares, modelsPath);
+      createModelsRoutes(models, middlewares, options.routes.modelsPath);
     }
 
     if (options.models.useDefaultModels) {
@@ -43,6 +43,7 @@ function verifyOptions(options) {
   const defaultOptions = {
     routes: {
       generateRoutes: true,
+      modelsPath: "",
       middlewares: [],
     },
     authentication: {
