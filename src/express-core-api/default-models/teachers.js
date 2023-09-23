@@ -1,42 +1,40 @@
 const Sequelize = require("sequelize");
 const database = require("../resources/database");
+const Login = require("./logins");
 
-const Login = database.define(
-  "logins",
+const Teacher = database.define(
+  "teachers",
   {
-    login_id: {
+    teacher_id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    login_email: {
+    teacher_name: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    login_password: {
+    teacher_birthday: {
+      type: Sequelize.DATE,
+      allowNull: false,
+    },
+    teacher_phone_number: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    login_name: {
+    teacher_specialization: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    login_photo_url: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-    login_count: {
+    login_id: {
       type: Sequelize.INTEGER,
-      allowNull: true,
+      allowNull: false,
     },
-  },
-  {
-    timestamps: false,
-  }
+  },  
 );
 
-// Login.hasMany(Student, { foreignKey: "login_id" });
+Teacher.belongsTo(Login, { foreignKey: "login_id", allowNull: false });
 
-Login.sync();
+Teacher.sync();
 
-module.exports = Login;
+module.exports = Teacher;

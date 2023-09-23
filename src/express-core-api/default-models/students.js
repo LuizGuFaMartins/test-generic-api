@@ -33,10 +33,6 @@ const Student = database.define(
 );
 
 Student.belongsTo(Login, { foreignKey: "login_id", allowNull: false });
-// Student.belongsToMany(Subject, {
-//   through: StudentSubject,
-//   foreignKey: "student_id",
-// });
 
 Student.sync();
 

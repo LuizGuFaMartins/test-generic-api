@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const genericController = require("./generic-controller");
+const genericController = require("../controllers/generic-controller");
 const {
   associateRelation,
-} = require("./middlewares/associate-relation-middleware");
-const { buildQuery } = require("./middlewares/build-query-middleware");
+} = require("../../middlewares/associate-relation-middleware");
+const { buildQuery } = require("../../middlewares/build-query-middleware");
 
 router.get("/", associateRelation, buildQuery, genericController.findAll);
 
