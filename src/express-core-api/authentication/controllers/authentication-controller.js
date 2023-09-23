@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const Login = require("../../default-models/logins");
 
 exports.auth = async (req, res) => {
@@ -10,9 +11,14 @@ exports.auth = async (req, res) => {
       login_email: login_email,
     },
   })
-    .then((login) => {
+    .then(async (login) => {
       if (login) {
-        if (login_password === login.login_password) {
+        const is_match = await bcrypt.compare(
+          login_password,
+          login.login_password
+        );
+
+        if (is_match) {
           const access_token = jwt.sign(
             { user: login_email },
             process.env.JWT_KEY,
@@ -59,17 +65,24 @@ exports.auth = async (req, res) => {
 };
 
 exports.createAuth = async (req, res) => {
-  let existentLogin = await Login.findOne({
+  let existent_login = await Login.findOne({
     where: {
       login_email: req.body.login_email,
     },
   });
 
-  if (!existentLogin) {
+  const salt_rounds = 10;
+  const hashed_password = await bcrypt.hash(
+    req.body.login_password,
+    salt_rounds
+  );
+
+  if (!existent_login) {
     let login = {
       login_email: req.body.login_email,
-      login_password: req.body.login_password,
+      login_password: hashed_password,
       login_name: req.body.login_name,
+      login_type: req.body.login_type,
       login_photo_url: req.body.login_photo_url,
     };
 
@@ -79,6 +92,7 @@ exports.createAuth = async (req, res) => {
       login_id: saved_login.login_id,
       login_email: saved_login.login_email,
       login_name: saved_login.login_name,
+      login_type: saved_login.login_type,
     });
   } else {
     return res

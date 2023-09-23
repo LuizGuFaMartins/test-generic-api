@@ -2,23 +2,27 @@ const Sequelize = require("sequelize");
 const database = require("../resources/database");
 const Login = require("./logins");
 
-const Student = database.define(
-  "students",
+const Teacher = database.define(
+  "teachers",
   {
-    student_id: {
+    teacher_id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    student_name: {
+    teacher_name: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    student_birthday: {
+    teacher_birthday: {
       type: Sequelize.DATE,
-      allowNull: true,
+      allowNull: false,
     },
-    student_phone_number: {
+    teacher_phone_number: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    teacher_specialization: {
       type: Sequelize.STRING,
       allowNull: false,
     },
@@ -26,14 +30,11 @@ const Student = database.define(
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-  },
-  {
-    timestamps: false,
-  }
+  },  
 );
 
-Student.belongsTo(Login, { foreignKey: "login_id", allowNull: false });
+Teacher.belongsTo(Login, { foreignKey: "login_id", allowNull: false });
 
-Student.sync();
+Teacher.sync();
 
-module.exports = Student;
+module.exports = Teacher;

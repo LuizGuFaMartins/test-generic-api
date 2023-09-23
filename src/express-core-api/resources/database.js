@@ -15,6 +15,11 @@ const sequelize = new Sequelize(
     host: database_host,
     port: database_port,
     dialect: database_dialect,
+    define: {
+      timestamps: true,
+      underscored: true,
+      underscoredAll: true,
+    },
   }
 );
 
