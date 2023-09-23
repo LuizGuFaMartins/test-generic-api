@@ -19,36 +19,38 @@ exports.auth = async (req, res) => {
         );
 
         if (is_match) {
-          const access_token = jwt.sign(
-            { user: login_email },
-            process.env.JWT_KEY,
-            {
-              expiresIn: 10000,
-            }
-          );
-
-          let count = login.login_count;
-          if (count === null) {
-            count = 1;
+          const jwt_key = process.env.EDUSYSLINK_JWT_KEY;
+          if (!jwt_key) {
+            console.error("\n ERROR: ", "You must provide a JWT secret key.", "\n");
+            response = res.status(500).json({ error: "You must provide a JWT secret key." });
           } else {
-            count = Number(count) + 1;
-          }
+            const access_token = jwt.sign({ user: login_email }, jwt_key, {
+              expiresIn: 10000,
+            });
 
-          Login.update(
-            {
-              login_count: count,
-            },
-            {
-              where: { login_id: login.login_id },
+            let count = login.login_count;
+            if (count === null) {
+              count = 1;
+            } else {
+              count = Number(count) + 1;
             }
-          );
 
-          response = res.status(200).json({
-            login_id: login.login_id,
-            login_name: login.login_name,
-            login_email: login_email,
-            access_token: access_token,
-          });
+            Login.update(
+              {
+                login_count: count,
+              },
+              {
+                where: { login_id: login.login_id },
+              }
+            );
+
+            response = res.status(200).json({
+              login_id: login.login_id,
+              login_name: login.login_name,
+              login_email: login_email,
+              access_token: access_token,
+            });
+          }
         } else {
           response = res.status(400).json({ error: "Invalid credentials" });
         }
@@ -57,7 +59,7 @@ exports.auth = async (req, res) => {
       }
     })
     .catch((err) => {
-      console.log("\n ERROR: ", err, "\n");
+      console.error("\n ERROR: ", err, "\n");
       response = res.status(500).json({ error: "Login query error" });
     });
 
